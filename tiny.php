@@ -1,14 +1,62 @@
 <?php
 //Default Configuration
+
+
+
+
+
 $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
 
-/**
- * H3K | Tiny File Manager V2.5.3
- * @author CCP Programmers
- * @email ccpprogrammers@gmail.com
- * @github https://github.com/prasathmani/tinyfilemanager
- * @link https://tinyfilemanager.github.io
- */
+
+
+
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    // Si no ha iniciado sesión, redirigir al login
+    header("Location: login.php");
+    exit();
+}
+include 'conexion.php';
+$usuario = $_SESSION['usuario'];
+
+
+// Consultar la base de datos para obtener más información del usuario
+$consulta_usuario = "SELECT * FROM usuarios WHERE usuario='$usuario'";
+$resultado_usuario = $conexion->query($consulta_usuario);
+
+// Verificar si se encontró información del usuario
+if ($resultado_usuario->num_rows > 0) {
+    $datos_usuario = $resultado_usuario->fetch_assoc();
+
+    // Extraer información adicional del usuario
+    $ruta = $datos_usuario['ruta'];
+    $descripcion = $datos_usuario['descripcion'];
+
+} else {
+    echo "No se encontró información del usuario.";
+}
+
+// Función para cerrar sesión
+function cerrarSesion() {
+    // Destruir la sesión
+    session_destroy();
+
+    // Redirigir al login
+    header("Location: login.php");
+    exit();
+}
+
+// Verificar si se hizo clic en "Cerrar sesión"
+if (isset($_GET['cerrar_sesion'])) {
+    cerrarSesion();
+}
+
+
+
+
+
+
+
 
 //TFM version
 define('VERSION', '2.5.3');
@@ -26,10 +74,28 @@ $use_auth = true;
 // Login user name and password
 // Users: array('Username' => 'Password', 'Username2' => 'Password2', ...)
 // Generate secure password hash - https://tinyfilemanager.github.io/docs/pwd.html
-$auth_users = array(
-    'admin' => '$2y$10$/K.hjNr84lLNDt8fTXjoI.DBp6PpeyoJ.mGwrrLuCZfAwfSAGqhOW', //admin@123
-    'user' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO' //12345
-);
+
+
+$consulta_auth = "SELECT usuario, contrasena FROM usuarios";
+$resultado_auth = $conexion->query($consulta_auth);
+
+// Verificar si se encontraron usuarios en la base de datos para autenticación
+if ($resultado_auth->num_rows > 0) {
+    $auth_users = array();
+    while ($fila = $resultado_auth->fetch_assoc()) {
+        $auth_users[$fila['usuario']] = $fila['contrasena'];
+    }
+} else {
+    echo "No se encontraron usuarios en la base de datos para autenticación.";
+}
+echo "Usuarios y contraseñas cargados desde la base de datos para autenticación: ";
+print_r($auth_users);
+
+
+// $auth_users = array(
+//     'admin' => '$2y$10$/K.hjNr84lLNDt8fTXjoI.DBp6PpeyoJ.mGwrrLuCZfAwfSAGqhOW', //admin@123
+//     'user' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO' //12345
+// );
 
 // Readonly users
 // e.g. array('users', 'guest', ...)
@@ -42,7 +108,23 @@ $global_readonly = false;
 
 // user specific directories
 // array('Username' => 'Directory path', 'Username2' => 'Directory path', ...)
-$directories_users = array();
+// $directories_users = array();
+
+
+$consulta_rutas = "SELECT usuario, ruta FROM usuarios";
+$resultado_rutas = $conexion->query($consulta_rutas);
+if ($resultado_rutas->num_rows > 0) {
+    $directories_users = array();
+    while ($fila = $resultado_rutas->fetch_assoc()) {
+        $directories_users[$fila['usuario']] = $fila['ruta'];
+    }
+} else {
+    echo "No se encontraron rutas en la base de datos.";
+}
+
+
+
+
 
 // Enable highlight.js (https://highlightjs.org/) on view's page
 $use_highlightjs = true;

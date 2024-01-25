@@ -1,11 +1,61 @@
 <?php
 //Default Configuration
-$CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
+$CONFIG = '{"lang":"es","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"dark"}';
+//https://filebrowser.org/configuration/authentication-method
+
+
+
+session_start();
+
+// Verificar si el usuario no ha iniciado sesión
+if (!isset($_SESSION['usuario'])) {
+    // Si no ha iniciado sesión, redirigir al login
+    header("Location: login.php");
+    exit();
+}
+
+// Incluir el archivo de conexión
+include 'conexion.php';
+
+// Obtener el nombre de usuario de la sesión
+$usuario = $_SESSION['usuario'];
+
+
+// Consultar la base de datos para obtener más información del usuario
+$consulta_usuario = "SELECT * FROM usuarios WHERE usuario='$usuario'";
+$resultado_usuario = $conexion->query($consulta_usuario);
+
+// Verificar si se encontró información del usuario
+if ($resultado_usuario->num_rows > 0) {
+    $datos_usuario = $resultado_usuario->fetch_assoc();
+
+    // Extraer información adicional del usuario
+    $ruta = $datos_usuario['ruta'];
+    $descripcion = $datos_usuario['descripcion'];
+
+} else {
+    echo "No se encontró información del usuario.";
+}
+
+// Función para cerrar sesión
+function cerrarSesion() {
+    // Destruir la sesión
+    session_destroy();
+
+    // Redirigir al login
+    header("Location: login.php");
+    exit();
+}
+
+// Verificar si se hizo clic en "Cerrar sesión"
+if (isset($_GET['cerrar_sesion'])) {
+    cerrarSesion();
+}
 
 /**
  * H3K | Tiny File Manager V2.5.3
  * @author CCP Programmers
- * @email ccpprogrammers@gmail.com
+ * @email roggrt@gmail.com
  * @github https://github.com/prasathmani/tinyfilemanager
  * @link https://tinyfilemanager.github.io
  */
@@ -14,7 +64,7 @@ $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":
 define('VERSION', '2.5.3');
 
 //Application Title
-define('APP_TITLE', 'Tiny File Manager');
+define('APP_TITLE', 'File Manager');
 
 // --- EDIT BELOW CONFIGURATION CAREFULLY ---
 
@@ -22,38 +72,100 @@ define('APP_TITLE', 'Tiny File Manager');
 // set true/false to enable/disable it
 // Is independent from IP white- and blacklisting
 $use_auth = true;
-
 // Login user name and password
 // Users: array('Username' => 'Password', 'Username2' => 'Password2', ...)
 // Generate secure password hash - https://tinyfilemanager.github.io/docs/pwd.html
-$auth_users = array(
-    'admin' => '$2y$10$/K.hjNr84lLNDt8fTXjoI.DBp6PpeyoJ.mGwrrLuCZfAwfSAGqhOW', //admin@123
-    'user' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO' //12345
-);
+
+
+//miau
+
+$consulta_auth = "SELECT usuario, contrasena FROM usuarios";
+$resultado_auth = $conexion->query($consulta_auth);
+
+// Verificar si se encontraron usuarios en la base de datos para autenticación
+if ($resultado_auth->num_rows > 0) {
+    $auth_users = array();
+    while ($fila = $resultado_auth->fetch_assoc()) {
+        $auth_users[$fila['usuario']] = $fila['contrasena'];
+    }
+} else {
+    echo "No se encontraron usuarios en la base de datos para autenticación.";
+}
+
+
+//miau
+
+
+
+// $auth_users = array(
+//     'admin' => '$2y$10$/K.hjNr84lLNDt8fTXjoI.DBp6PpeyoJ.mGwrrLuCZfAwfSAGqhOW', //admin@123
+//     'SolutionTracker' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO', //12345
+//     'Autopartes' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO', //12345
+//     'Icomotors' => '$2y$10$Fg6Dz8oH9fPoZ2jJan5tZuv6Z4Kp7avtQ9bDfrdRntXtPeiMAZyGO', //12345
+
+// );
+
+
+
+
+
 
 // Readonly users
 // e.g. array('users', 'guest', ...)
 $readonly_users = array(
-    // 'user'
+    'user'
 );
-
-// Global readonly, including when auth is not being used
+// Globl readonly, including when auth is not being used
 $global_readonly = false;
-
-// user specific directories
+// userspecific directories
 // array('Username' => 'Directory path', 'Username2' => 'Directory path', ...)
-$directories_users = array();
+
+
+
+
+
+
+
+
+
+
+// $directories_users = array(
+
+//     'admin' => 'xampp',
+//     'SolutionTracker' => 'C:\xampp\htdocs\1',
+//     'Autopartes' => 'C:\xampp\htdocs\2',
+//     'Icomotors' => 'C:\xampp\htdocs\3',
+//     'guest' => 'root/guest/temp',
+
+//  );
+
+//evolucion
+$consulta_rutas = "SELECT usuario, ruta FROM usuarios";
+$resultado_rutas = $conexion->query($consulta_rutas);
+if ($resultado_rutas->num_rows > 0) {
+    $directories_users = array();
+    while ($fila = $resultado_rutas->fetch_assoc()) {
+        $directories_users[$fila['usuario']] = $fila['ruta'];
+    }
+} else {
+    echo "No se encontraron rutas en la base de datos.";
+}
+
+
+
+
+
+
+
+
 
 // Enable highlight.js (https://highlightjs.org/) on view's page
 $use_highlightjs = true;
-
 // highlight.js style
 // for dark theme use 'ir-black'
 $highlightjs_style = 'vs';
-
 // Enable ace.js (https://ace.c9.io/) on view's page
 $edit_files = true;
-
 // Default timezone for date() and time()
 // Doc - http://php.net/manual/en/timezones.php
 $default_timezone = 'Etc/UTC'; // UTC
@@ -61,32 +173,32 @@ $default_timezone = 'Etc/UTC'; // UTC
 // Root path for file manager
 // use absolute path of directory i.e: '/var/www/folder' or $_SERVER['DOCUMENT_ROOT'].'/folder'
 $root_path = $_SERVER['DOCUMENT_ROOT'];
-
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root
+
+
+
+
+
 $root_url = '';
+
 
 // Server hostname. Can set manually if wrong
 // $_SERVER['HTTP_HOST'].'/folder'
 $http_host = $_SERVER['HTTP_HOST'];
-
 // input encoding for iconv
 $iconv_input_encoding = 'UTF-8';
-
 // date() format for file modification date
 // Doc - https://www.php.net/manual/en/function.date.php
 $datetime_format = 'm/d/Y g:i A';
-
 // Path display mode when viewing file information
 // 'full' => show full path
 // 'relative' => show path relative to root_path
 // 'host' => show path on the host
 $path_display_mode = 'full';
-
 // Allowed file extensions for create and rename files
 // e.g. 'txt,html,css,js'
 $allowed_file_extensions = '';
-
 // Allowed file extensions for upload files
 // e.g. 'gif,png,jpg,html,txt'
 $allowed_upload_extensions = '';
@@ -95,7 +207,6 @@ $allowed_upload_extensions = '';
 // full path, e.g http://example.com/favicon.png
 // local path, e.g images/icons/favicon.png
 $favicon_path = '';
-
 // Files and folders to excluded from listing
 // e.g. array('myfile.html', 'personal-folder', '*.php', ...)
 $exclude_items = array();
@@ -408,6 +519,10 @@ if ($use_auth) {
 if ($use_auth && isset($_SESSION[FM_SESSION_ID]['logged'])) {
     $root_path = isset($directories_users[$_SESSION[FM_SESSION_ID]['logged']]) ? $directories_users[$_SESSION[FM_SESSION_ID]['logged']] : $root_path;
 }
+
+
+
+//workinnnnnnnnnnnnnng, $root_path
 
 // clean and check $root_path
 $root_path = rtrim($root_path, '\\/');
@@ -880,7 +995,7 @@ if (isset($_POST['rename_from'], $_POST['rename_to'], $_POST['token']) && !FM_RE
     // rename
     if (fm_isvalid_filename($new) && $old != '' && $new != '') {
         if (fm_rename($path . '/' . $old, $path . '/' . $new)) {
-            fm_set_msg(sprintf(lng('Renamed from').' <b>%s</b> '. lng('to').' <b>%s</b>', fm_enc($old), fm_enc($new)));
+            fm_set_msg(sprintf(lng('Renombrado de').' <b>%s</b> '. lng('a').' <b>%s</b>', fm_enc($old), fm_enc($new)));
         } else {
             fm_set_msg(sprintf(lng('Error while renaming from').' <b>%s</b> '. lng('to').' <b>%s</b>', fm_enc($old), fm_enc($new)), 'error');
         }
@@ -1535,6 +1650,7 @@ if (isset($_GET['settings']) && !FM_READONLY) {
                             </select>
                         </div>
                     </div>
+                    <a href="?cerrar_sesion=1">Cerrar sesión</a>
                     <div class="mt-3 mb-3 row ">
                         <label for="js-error-report" class="col-sm-3 col-form-label"><?php echo lng('ErrorReporting') ?></label>
                         <div class="col-sm-9">
@@ -1655,8 +1771,29 @@ if (isset($_GET['view'])) {
     fm_show_header(); // HEADER
     fm_show_nav_path(FM_PATH); // current path
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     $file_url = FM_ROOT_URL . fm_convert_win((FM_PATH != '' ? '/' . FM_PATH : '') . '/' . $file);
-    $file_path = $path . '/' . $file;
+    $file_path = $path . '/autopartes/' . $file;
 
     $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
     $mime_type = fm_get_mime_type($file_path);
@@ -2026,6 +2163,13 @@ $tableTheme = (FM_THEME == "dark") ? "text-white bg-dark table-dark" : "bg-white
     <input type="hidden" name="p" value="<?php echo fm_enc(FM_PATH) ?>">
     <input type="hidden" name="group" value="1">
     <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
+
+
+
+
+
+
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm <?php echo $tableTheme; ?>" id="main-table">
             <thead class="thead-white">
@@ -4131,7 +4275,7 @@ $isStickyNavBar = $sticky_navbar ? 'navbar-fixed' : 'navbar-normal';
 
     // on mouse hover image preview
     !function(s){s.previewImage=function(e){var o=s(document),t=".previewImage",a=s.extend({xOffset:20,yOffset:-20,fadeIn:"fast",css:{padding:"5px",border:"1px solid #cccccc","background-color":"#fff"},eventSelector:"[data-preview-image]",dataKey:"previewImage",overlayId:"preview-image-plugin-overlay"},e);return o.off(t),o.on("mouseover"+t,a.eventSelector,function(e){s("p#"+a.overlayId).remove();var o=s("<p>").attr("id",a.overlayId).css("position","absolute").css("display","none").append(s('<img class="c-preview-img">').attr("src",s(this).data(a.dataKey)));a.css&&o.css(a.css),s("body").append(o),o.css("top",e.pageY+a.yOffset+"px").css("left",e.pageX+a.xOffset+"px").fadeIn(a.fadeIn)}),o.on("mouseout"+t,a.eventSelector,function(){s("#"+a.overlayId).remove()}),o.on("mousemove"+t,a.eventSelector,function(e){s("#"+a.overlayId).css("top",e.pageY+a.yOffset+"px").css("left",e.pageX+a.xOffset+"px")}),this},s.previewImage()}(jQuery);
-
+    // echo "Root directory: " . $root_url;
     // Dom Ready Events
     $(document).ready( function () {
         // dataTable init
@@ -4155,7 +4299,10 @@ $isStickyNavBar = $sticky_navbar ? 'navbar-fixed' : 'navbar-normal';
             $(".fm-upload-wrapper .card-tabs-container").addClass('hidden');$(target).removeClass('hidden');
         });
     });
+
 </script>
+
+
 <?php if (isset($_GET['edit']) && isset($_GET['env']) && FM_EDIT_FILE && !FM_READONLY):
         
         $ext = pathinfo($_GET["edit"], PATHINFO_EXTENSION);
