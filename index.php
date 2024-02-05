@@ -1,51 +1,57 @@
 <?php
 //Default Configuration
-$CONFIG = '{"lang":"es","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"dark"}';
+$CONFIG = '{"lang":"es","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
+
+///error en directories_user
+
+
+
+// $CONFIG = '{"lang":"es","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
 //https://filebrowser.org/configuration/authentication-method
 
 
 
-session_start();
+// session_start();
 
-// Verificar si el usuario no ha iniciado sesión
-if (!isset($_SESSION['usuario'])) {
-    // Si no ha iniciado sesión, redirigir al login
-    header("Location: login.php");
-    exit();
-}
+// // Verificar si el usuario no ha iniciado sesión
+// if (!isset($_SESSION['usuario'])) {
+//     // Si no ha iniciado sesión, redirigir al login
+//     header("Location: login.php");
+//     exit();
+// }
 
 // Incluir el archivo de conexión
 include 'conexion.php';
 
 // Obtener el nombre de usuario de la sesión
-$usuario = $_SESSION['usuario'];
+// $usuario = $_SESSION['usuario'];
 
 
 // Consultar la base de datos para obtener más información del usuario
-$consulta_usuario = "SELECT * FROM usuarios WHERE usuario='$usuario'";
-$resultado_usuario = $conexion->query($consulta_usuario);
+// $consulta_usuario = "SELECT * FROM usuarios WHERE usuario='$usuario'";
+// $resultado_usuario = $conexion->query($consulta_usuario);
 
-// Verificar si se encontró información del usuario
-if ($resultado_usuario->num_rows > 0) {
-    $datos_usuario = $resultado_usuario->fetch_assoc();
+// // Verificar si se encontró información del usuario
+// if ($resultado_usuario->num_rows > 0) {
+//     $datos_usuario = $resultado_usuario->fetch_assoc();
 
-    // Extraer información adicional del usuario
-    $ruta = $datos_usuario['ruta'];
-    $descripcion = $datos_usuario['descripcion'];
+//     // Extraer información adicional del usuario
+//     $ruta = $datos_usuario['ruta'];
+//     $descripcion = $datos_usuario['descripcion'];
 
-} else {
-    echo "No se encontró información del usuario.";
-}
+// } else {
+//     echo "No se encontró información del usuario.";
+// }
 
 // Función para cerrar sesión
-function cerrarSesion() {
-    // Destruir la sesión
-    session_destroy();
+// function cerrarSesion() {
+//     // Destruir la sesión
+//     session_destroy();
 
-    // Redirigir al login
-    header("Location: login.php");
-    exit();
-}
+//     // Redirigir al login
+//     header("Location: login.php");
+//     exit();
+// }
 
 // Verificar si se hizo clic en "Cerrar sesión"
 if (isset($_GET['cerrar_sesion'])) {
@@ -54,7 +60,7 @@ if (isset($_GET['cerrar_sesion'])) {
 
 /**
  * H3K | Tiny File Manager V2.5.3
- * @author CCP Programmers
+ * @author roggrt
  * @email roggrt@gmail.com
  * @github https://github.com/prasathmani/tinyfilemanager
  * @link https://tinyfilemanager.github.io
@@ -64,7 +70,7 @@ if (isset($_GET['cerrar_sesion'])) {
 define('VERSION', '2.5.3');
 
 //Application Title
-define('APP_TITLE', 'File Manager');
+define('APP_TITLE', 'Administrador de Archivos');
 
 // --- EDIT BELOW CONFIGURATION CAREFULLY ---
 
@@ -113,7 +119,7 @@ if ($resultado_auth->num_rows > 0) {
 // Readonly users
 // e.g. array('users', 'guest', ...)
 $readonly_users = array(
-    'user'
+ //   'user'
 );
 // Globl readonly, including when auth is not being used
 $global_readonly = false;
@@ -140,21 +146,84 @@ $global_readonly = false;
 //  );
 
 //evolucion
+
+
+// $consulta_rutas = "SELECT usuario, ruta FROM usuarios";
+// $resultado_rutas = $conexion->query($consulta_rutas);
+// if ($resultado_rutas->num_rows > 0) {
+//     $directories_users = array();
+//     while ($fila = $resultado_rutas->fetch_assoc()) {
+//         $directories_users[$fila['usuario']] = $fila['ruta'];
+//     }
+// } else {
+//     echo "No se encontraron rutas en la base de datos.";
+// }
+
+// evolucion2
+
+
+//http://localhost/filemanager/tinyfilemanager.php?p=4/Icomotors gg&view=imggg.png
+//C:/xampp/htdocs/4/Icomotors gg/imggg.png
+
+// $consulta_rutas = "SELECT usuario, ruta FROM usuarios";
+// $resultado_rutas = $conexion->query($consulta_rutas);
+
+// if ($resultado_rutas->num_rows > 0) {
+//     $directories_users = array();
+
+//     while ($fila = $resultado_rutas->fetch_assoc()) {
+//         // Obtenemos la ruta relativa del archivo
+//         $ruta_relativa = $fila['ruta'];
+
+//         // Agregamos la ruta relativa al array de rutas de usuario
+//         $directories_users[$fila['usuario']] = $ruta_relativa;
+//     }
+// } else {
+//     echo "No se encontraron rutas en la base de datos.";
+// }
+
+
+//evolucionao
 $consulta_rutas = "SELECT usuario, ruta FROM usuarios";
 $resultado_rutas = $conexion->query($consulta_rutas);
-if ($resultado_rutas->num_rows > 0) {
-    $directories_users = array();
-    while ($fila = $resultado_rutas->fetch_assoc()) {
-        $directories_users[$fila['usuario']] = $fila['ruta'];
+
+
+$directories_users = array();
+//help aqui esta el error iji
+
+// if ($resultado_rutas->num_rows > 0) {
+//     $directories_users = array();
+
+//     while ($fila = $resultado_rutas->fetch_assoc()) {
+//         // Obtenemos la ruta relativa del archivo desde la base de datos
+//         $ruta_relativa = $fila['ruta'];
+
+//         // Concatenamos la parte estática de la ruta
+//         $ruta_completa = $_SERVER['DOCUMENT_ROOT'] . $ruta_relativa;
+
+//         // Agregamos la ruta completa al array de rutas de usuario
+//         $directories_users[$fila['usuario']] = $ruta_completa;
+//     }
+// } else {
+//     echo "No se encontraron rutas en la base de datos.";
+// }
+
+
+while ($fila = $resultado_rutas->fetch_assoc()) {
+    // Obtenemos la ruta relativa del archivo desde la base de datos
+    $ruta_relativa = $fila['ruta'];
+
+    // Concatenamos la parte estática de la ruta
+    $ruta_completa = $_SERVER['DOCUMENT_ROOT'] . $ruta_relativa;
+
+    // Verificamos si el archivo existe
+    if (file_exists($ruta_completa)) {
+        // Agregamos la ruta completa al array de rutas de usuario
+        $directories_users[$fila['usuario']] = $ruta_completa;
+    } else {
+        echo "El archivo no existe en la ruta especificada: $ruta_completa";
     }
-} else {
-    echo "No se encontraron rutas en la base de datos.";
 }
-
-
-
-
-
 
 
 
@@ -176,11 +245,13 @@ $root_path = $_SERVER['DOCUMENT_ROOT'];
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 
 
 
-$root_url = '';
+$root_url = '/';
 
 
 // Server hostname. Can set manually if wrong
@@ -371,16 +442,53 @@ $is_https = isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['
     || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https';
 
 // update $root_url based on user specific directories
+
+//MI ERROR ESTA AQUI
+
+// $directories_users = array();
+
+
 if (isset($_SESSION[FM_SESSION_ID]['logged']) && !empty($directories_users[$_SESSION[FM_SESSION_ID]['logged']])) {
     $wd = fm_clean_path(dirname($_SERVER['PHP_SELF']));
     $root_url =  $root_url.$wd.DIRECTORY_SEPARATOR.$directories_users[$_SESSION[FM_SESSION_ID]['logged']];
 }
 // clean $root_url
 $root_url = fm_clean_path($root_url);
+echo "El valor de root_url es: " . $root_url;
+
+//cleanx2
+
+
+$root_url = str_replace('C:/xampp/htdocs/', '', $root_url);
+
+
+// Ahora $root_url debería contener solo la parte relevante de la URL
+echo "El valor de root_url depurado es: " . $root_url;
+$root_url = ''; 
+echo "El valor de root_url es: " . $root_url;
+//http://localhost/filemanager/index.php?p=Carpeta+de+solution&view=ggeasy.png
+//http://localhost/filemanager/tinyfilemanager.php?p=1%2FCarpeta+de+solution&view=ggeasy.png
+
+//solicitud buggeada http://localhost/filemanager/1/Carpeta de solution/ggeasy.png
+//solicitud limpia 
 
 // abs path for site
+// defined('FM_ROOT_URL') || define('FM_ROOT_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . (!empty($root_url) ? '/' . $root_url : ''));
+
+//los cambios son buenos
+
+// defined('FM_ROOT_URL') || define('FM_ROOT_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . '/filemanager/1');
+//backup
+//defined('FM_ROOT_URL') || define('FM_ROOT_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . (!empty($root_url) ? '/' . $root_url : ''));
+
 defined('FM_ROOT_URL') || define('FM_ROOT_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . (!empty($root_url) ? '/' . $root_url : ''));
+
 defined('FM_SELF_URL') || define('FM_SELF_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . $_SERVER['PHP_SELF']);
+
+
+
+
+
 
 // logout
 if (isset($_GET['logout'])) {
@@ -466,12 +574,13 @@ if ($use_auth) {
                                 <form class="form-signin" action="" method="post" autocomplete="off">
                                     <div class="mb-3">
                                        <div class="brand">
-                                            <svg version="1.0" xmlns="http://www.w3.org/2000/svg" M1008 width="100%" height="80px" viewBox="0 0 238.000000 140.000000" aria-label="H3K Tiny File Manager">
-                                                <g transform="translate(0.000000,140.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-                                                    <path d="M160 700 l0 -600 110 0 110 0 0 260 0 260 70 0 70 0 0 -260 0 -260 110 0 110 0 0 600 0 600 -110 0 -110 0 0 -260 0 -260 -70 0 -70 0 0 260 0 260 -110 0 -110 0 0 -600z"/>
-                                                    <path fill="#003500" d="M1008 1227 l-108 -72 0 -117 0 -118 110 0 110 0 0 110 0 110 70 0 70 0 0 -180 0 -180 -125 0 c-69 0 -125 -3 -125 -6 0 -3 23 -39 52 -80 l52 -74 73 0 73 0 0 -185 0 -185 -70 0 -70 0 0 115 0 115 -110 0 -110 0 0 -190 0 -190 181 0 181 0 109 73 108 72 1 181 0 181 -69 48 -68 49 68 50 69 49 0 249 0 248 -182 -1 -183 0 -107 -72z"/>
-                                                    <path d="M1640 700 l0 -600 110 0 110 0 0 208 0 208 35 34 35 34 35 -34 35 -34 0 -208 0 -208 110 0 110 0 0 212 0 213 -87 87 -88 88 88 88 87 87 0 213 0 212 -110 0 -110 0 0 -208 0 -208 -70 -69 -70 -69 0 277 0 277 -110 0 -110 0 0 -600z"/></g>
-                                            </svg>
+                                            
+
+                                       <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+<polygon fill="#e68f3a" points="43,14.6 43,33.08 23,44.63 23,44.62 7,35.39 7,16.91 27,5.36"></polygon><polygon fill="#ff9f40" points="23,26.149 23,44.624 7,35.389 7,16.904"></polygon><polygon fill="#ccc" points="17,22.691 17,27.318 13,25.008 13,20.381"></polygon><polygon fill="#a8a8a8" points="17,22.691 37,11.144 33,8.834 13,20.381"></polygon><polygon fill="#b3702d" points="43,33.083 23,44.63 23,26.149 43,14.602"></polygon><polygon fill="#d98836" points="12,24.423 12,26.732 18,30.196 18,27.887"></polygon><polygon fill="#b3702d" points="12,24.423 12,26.732 14,25.577"></polygon>
+</svg>
+
+
                                         </div>
                                         <div class="text-center">
                                             <h1 class="card-title"><?php echo APP_TITLE; ?></h1>
@@ -502,7 +611,7 @@ if ($use_auth) {
                         </div>
                         <div class="footer text-center">
                             &mdash;&mdash; &copy;
-                            <a href="https://tinyfilemanager.github.io/" target="_blank" class="text-decoration-none text-muted" data-version="<?php echo VERSION; ?>">CCP Programmers</a> &mdash;&mdash;
+                            <a href="https://tinyfilemanager.github.io/" target="_blank" class="text-decoration-none text-muted" data-version="<?php echo VERSION; ?>"> roggrt</a> &mdash;&mdash;
                         </div>
                     </div>
                 </div>
@@ -1719,8 +1828,8 @@ if (isset($_GET['help'])) {
                 <div class="row">
                     <div class="col-xs-12 col-sm-6">
                         <p><h3><a href="https://github.com/prasathmani/tinyfilemanager" target="_blank" class="app-v-title"> Tiny File Manager <?php echo VERSION; ?></a></h3></p>
-                        <p>Author: Prasath Mani</p>
-                        <p>Mail Us: <a href="mailto:ccpprogrammers@gmail.com">ccpprogrammers[at]gmail.com</a> </p>
+                        <p>Author: Roger Rojas</p>
+                        <p>Joao Solutions: <a href="mailto:roggrt@gmail.com">roggrt dev</a> </p>
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="card">
@@ -1759,21 +1868,33 @@ if (isset($_GET['help'])) {
 }
 
 // file viewer
-if (isset($_GET['view'])) {
-    $file = $_GET['view'];
-    $file = fm_clean_path($file, false);
-    $file = str_replace('/', '', $file);
-    if ($file == '' || !is_file($path . '/' . $file) || in_array($file, $GLOBALS['exclude_items'])) {
-        fm_set_msg(lng('File not found'), 'error');
-        $FM_PATH=FM_PATH; fm_redirect(FM_SELF_URL . '?p=' . urlencode($FM_PATH));
-    }
+// if (isset($_GET['view'])) {
+//     $file = $_GET['view'];
+//     $file = fm_clean_path($file, false);
+//     $file = str_replace('/', '', $file);
+//     if ($file == '' || !is_file($path . '/' . $file) || in_array($file, $GLOBALS['exclude_items'])) {
+//         fm_set_msg(lng('File not found'), 'error');
+//         $FM_PATH=FM_PATH; fm_redirect(FM_SELF_URL . '?p=' . urlencode($FM_PATH));
+//     }
 
-    fm_show_header(); // HEADER
-    fm_show_nav_path(FM_PATH); // current path
+//     fm_show_header(); // HEADER
+//     fm_show_nav_path(FM_PATH); // current path
 
+//varianza
 
-
-
+    if (isset($_GET['view'])) {
+        $file = $_GET['view'];
+        $file = fm_clean_path($file, false);
+        $file = str_replace('/', '', $file);
+        if ($file == '' || !is_file($path . '/' . $file) || in_array($file, $GLOBALS['exclude_items'])) {
+            fm_set_msg(lng('Archivo no encontrado'), 'error');
+            $FM_PATH=FM_PATH; fm_redirect(FM_SELF_URL . '?p=' . urlencode($FM_PATH));
+        }
+    
+        fm_show_header(); // HEADER
+        fm_show_nav_path(FM_PATH); // current path
+    
+    
 
 
 
@@ -1793,8 +1914,10 @@ if (isset($_GET['view'])) {
 
 
     $file_url = FM_ROOT_URL . fm_convert_win((FM_PATH != '' ? '/' . FM_PATH : '') . '/' . $file);
-    $file_path = $path . '/autopartes/' . $file;
-
+    
+    //$file_path = $path . '/autopartes/' . $file;
+    // $file_path = $path . '/' . $file;
+    $file_path = $path . '/' . $file;
     $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
     $mime_type = fm_get_mime_type($file_path);
     $filesize_raw = fm_get_size($file_path);
@@ -3788,7 +3911,7 @@ global $lang, $root_url, $favicon_path;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Web based File Manager in PHP, Manage your files efficiently and easily with Tiny File Manager">
-    <meta name="author" content="CCP Programmers">
+    <meta name="author" content="roggrt">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
     <?php if($favicon_path) { echo '<link rel="icon" href="'.fm_enc($favicon_path).'" type="image/png">'; } ?>
@@ -3861,7 +3984,7 @@ $isStickyNavBar = $sticky_navbar ? 'navbar-fixed' : 'navbar-normal';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Web based File Manager in PHP, Manage your files efficiently and easily with Tiny File Manager">
-    <meta name="author" content="CCP Programmers">
+    <meta name="author" content="roggrt">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
     <?php if($favicon_path) { echo '<link rel="icon" href="'.fm_enc($favicon_path).'" type="image/png">'; } ?>

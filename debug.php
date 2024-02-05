@@ -1,7 +1,7 @@
 <?php
 //Default Configuration
 $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
-
+include 'conexion.php';
 /**
  * H3K | Tiny File Manager V2.5.3
  * @author CCP Programmers
@@ -17,7 +17,9 @@ define('VERSION', '2.5.3');
 define('APP_TITLE', 'Tiny File Manager');
 
 // --- EDIT BELOW CONFIGURATION CAREFULLY ---
-
+if (isset($_GET['cerrar_sesion'])) {
+    cerrarSesion();
+}
 // Auth with login/password
 // set true/false to enable/disable it
 // Is independent from IP white- and blacklisting
@@ -392,7 +394,7 @@ if ($use_auth) {
                         </div>
                         <div class="footer text-center">
                             &mdash;&mdash; &copy;
-                            <a href="https://tinyfilemanager.github.io/" target="_blank" class="text-decoration-none text-muted" data-version="<?php echo VERSION; ?>">CCP Programmers</a> &mdash;&mdash;
+                            <a href="https://tinyfilemanager.github.io/" target="_blank" class="text-decoration-none text-muted" data-version="<?php echo VERSION; ?>">roggrt</a> &mdash;&mdash;
                         </div>
                     </div>
                 </div>
