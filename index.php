@@ -220,7 +220,7 @@ while ($fila = $resultado_rutas->fetch_assoc()) {
     if (file_exists($ruta_completa)) {
         // Agregamos la ruta completa al array de rutas de usuario
         $directories_users[$fila['usuario']] = $ruta_completa;
-    } else {
+    } else { 
         echo "El archivo no existe en la ruta especificada: $ruta_completa";
     }
 }
@@ -241,7 +241,7 @@ $default_timezone = 'Etc/UTC'; // UTC
 
 // Root path for file manager
 // use absolute path of directory i.e: '/var/www/folder' or $_SERVER['DOCUMENT_ROOT'].'/folder'
-$root_path = $_SERVER['DOCUMENT_ROOT'];
+$root_path = $_SERVER['DOCUMENT_ROOT'].'';
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root
 
@@ -291,7 +291,7 @@ $online_viewer = 'google';
 
 // Sticky Nav bar
 // true => enable sticky header
-// false => disable sticky header
+// false => disable sticky 0.
 $sticky_navbar = true;
 
 // Maximum file upload size
@@ -362,7 +362,7 @@ if ( !defined( 'FM_SESSION_ID')) {
 
 // Configuration
 $cfg = new FM_Config();
-
+ 
 // Default language
 $lang = isset($cfg->data['lang']) ? $cfg->data['lang'] : 'en';
 
@@ -454,18 +454,17 @@ if (isset($_SESSION[FM_SESSION_ID]['logged']) && !empty($directories_users[$_SES
 }
 // clean $root_url
 $root_url = fm_clean_path($root_url);
-echo "El valor de root_url es: " . $root_url;
+// echo "El valor de root_url es: " . $root_url;
 
 //cleanx2
-
 
 $root_url = str_replace('C:/xampp/htdocs/', '', $root_url);
 
 
 // Ahora $root_url debería contener solo la parte relevante de la URL
-echo "El valor de root_url depurado es: " . $root_url;
+// echo "El valor de root_url depurado es: " . $root_url;
 $root_url = ''; 
-echo "El valor de root_url es: " . $root_url;
+// echo "El valor de root_url es: " . $root_url;
 //http://localhost/filemanager/index.php?p=Carpeta+de+solution&view=ggeasy.png
 //http://localhost/filemanager/tinyfilemanager.php?p=1%2FCarpeta+de+solution&view=ggeasy.png
 
@@ -484,11 +483,6 @@ echo "El valor de root_url es: " . $root_url;
 defined('FM_ROOT_URL') || define('FM_ROOT_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . (!empty($root_url) ? '/' . $root_url : ''));
 
 defined('FM_SELF_URL') || define('FM_SELF_URL', ($is_https ? 'https' : 'http') . '://' . $http_host . $_SERVER['PHP_SELF']);
-
-
-
-
-
 
 // logout
 if (isset($_GET['logout'])) {
@@ -527,7 +521,6 @@ if ($ip_ruleset != 'OFF') {
             $proceed = true;
         }
     }
-
     if($proceed == false){
         trigger_error('User connection denied from: ' . $clientIp, E_USER_WARNING);
 
@@ -611,7 +604,7 @@ if ($use_auth) {
                         </div>
                         <div class="footer text-center">
                             &mdash;&mdash; &copy;
-                            <a href="https://tinyfilemanager.github.io/" target="_blank" class="text-decoration-none text-muted" data-version="<?php echo VERSION; ?>"> roggrt</a> &mdash;&mdash;
+                            <a href="https://tinyfilemanager.github.io/" target="_blank" class="text-decoration-none text-muted" data-version="<?php echo VERSION; ?>"> JOAO Solutions</a> &mdash;&mdash;
                         </div>
                     </div>
                 </div>
@@ -3507,7 +3500,7 @@ function fm_download_file($fileLocation, $fileName, $chunkSize  = 1024)
     fclose($fp);
 
     return ((connection_status() == 0) and !connection_aborted());
-}
+} 
 
 /**
  * If the theme is dark, return the text-white and bg-dark classes.
